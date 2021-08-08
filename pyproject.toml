@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "fairseq-tutorial"
+version = "0.1.0"
+description = "Fairseq tutorial"
+authors = ["Hiroyuki Deguchi <deguchi.hiroyuki.db0@is.naist.jp>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fairseq = {git = "https://github.com/pytorch/fairseq.git"}
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

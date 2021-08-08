@@ -1,0 +1,47 @@
+# @package _group_
+
+hydra:
+  run:
+    dir: .
+
+common:
+    fp16: true
+
+dataset:
+    num_workers: 0
+    max_tokens: 6000
+
+optimization:
+    max_epoch: 30
+    clip_norm: 0.0
+    lr:
+        - 7e-4
+
+checkpoint:
+    no_epoch_checkpoints: true
+    write_checkpoints_asynchronously: false
+    save_dir: checkpoints_hydra/
+
+model:
+    _name: transformer
+    activation_fn: "relu"
+    share_decoder_input_output_embed: true
+
+task:
+    _name: translation
+    data: binarized/
+
+criterion:
+    _name: label_smoothed_cross_entropy
+    label_smoothing: 0.1
+
+optimizer:
+    _name: adam
+    adam_betas:
+        - 0.9
+        - 0.98
+
+lr_scheduler:
+    _name: inverse_sqrt
+    warmup_updates: 4000
+    warmup_init_lr: 1e-7
