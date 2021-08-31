@@ -68,6 +68,9 @@ Training a model w/ :code:`fairseq-train`
           --max-epoch 30 --no-epoch-checkpoints \
           --fp16
 
+If you want to use Tensorboard for logging training statistics, add :code:`--tensorboard-logdir DIR`.
+You can also use Weights and Biases (a rich logging service) with :code:`--wandb-project NAME`.
+
 Training a model w/ :code:`fairseq-hydra-train`
 -----------------------------------------------
 
@@ -107,3 +110,20 @@ Then, extract and de-tokenize translation hypotheses, and compute BLEU and RIBES
    % ./evaluate-aspec.sh en /path/to/ASPEC-JE/devtest/devtest.txt < results/hypothesis-test.detok.txt
 
 :code:`evaluate-aspec.sh` generates the reference and computes BLEU and RIBES scores based on `WAT Automatic Evaluation Procedures <http://lotus.kuee.kyoto-u.ac.jp/WAT/evaluation/automatic_evaluation_systems/automaticEvaluationEN.html>`_.
+
+5. Interactive Translation
+==========================
+
+It can be translate interactively with :code:`fairseq-interactive`.
+In the default, it inputs from stdin.
+
+.. code:: bash
+
+   % fairseq-interactive \
+      binarized/ \
+      --path checkpoints/checkpoint_best.pt \
+      --max-len-a 1 --max-len-b 50 \
+      --beam 5 --lenpen 1.0 \
+      --nbest 1 \
+      --post-process subword_nmt \
+      --fp16
