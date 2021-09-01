@@ -43,7 +43,7 @@ Example:
         ├── train-2.txt
         └── train-3.txt
 __EOT__
-    exit -1
+    exit 1
 fi
 
 src=ja
@@ -53,8 +53,8 @@ OUTDIR=aspec_ja_en
 prep=$OUTDIR
 tmp=$prep/tmp
 orig=$prep/orig
-mkdir -p $prep $orig $tmp $prep/tools
-tools="$(readlink -f $prep/tools)"
+tools=$prep/tools
+mkdir -p $prep $orig $tmp $tools
 
 NUM_WORKERS=${NUM_WORKERS:-8}
 BPE_TOKENS=8000
