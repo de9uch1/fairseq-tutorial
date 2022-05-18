@@ -63,11 +63,13 @@ PARALLEL_SCRIPT="$tools/parallel"
 PARALLEL_ARGS="--gnu --no-notice --pipe -j $NUM_WORKERS -k"
 MOSES_SCRIPTS="$tools/mosesdecoder/scripts"
 MOSES_TOKENIZER="$MOSES_SCRIPTS/tokenizer/tokenizer.perl"
-KYTEA_TOKENIZER="$tools/kytea/bin/kytea"
+KYTEA_TOKENIZER="kytea/bin/kytea"
+TOOLS_KYTEA_TOKENIZER="$tools/$KYTEA_TOKENIZER"
 NORM_PUNC="$MOSES_SCRIPTS/tokenizer/normalize-punctuation.perl"
 Z2H="$(dirname $0)/z2h-utf8.pl"
 CLEAN="$MOSES_SCRIPTS/training/clean-corpus-n.perl"
-FASTBPE="$tools/fastBPE/fastbpe"
+FASTBPE="fastBPE/fastbpe"
+TOOLS_FASTBPE="$tools/$FASTBPE"
 
 pushd "$tools" >/dev/null
 if not_exists "$PARALLEL_SCRIPT" || \
@@ -150,7 +152,7 @@ log "Tokenizing sentences in Japanese..."
 for split in train dev devtest test; do
     cat $orig/$split.ja | \
         perl -C -pe 'use utf8; tr/\|[]/｜［］/; ' | \
-        "$PARALLEL_SCRIPT" $PARALLEL_ARGS "$KYTEA_TOKENIZER" -out tok | \
+        "$PARALLEL_SCRIPT" $PARALLEL_ARGS "$TOOLS_KYTEA_TOKENIZER" -out tok | \
         perl -C -pe 'use utf8; s/　/ /g;' | \
         perl -C -pe 'use utf8; s/^ +//; s/ +$//; s/ +/ /g;' \
              > $tmp/$split.ja
@@ -179,9 +181,9 @@ log "Learn BPE on $tmp/train.$src, $tmp/train.$tgt..."
 BPE_CODE=$prep/code
 for l in $src $tgt; do
     train=train.$l
-    "$FASTBPE" learnbpe $BPE_TOKENS $tmp/$train > $BPE_CODE.$l
-    "$FASTBPE" applybpe $tmp/bpe$BPE_TOKENS.$train $tmp/$train $BPE_CODE.$l
-    "$FASTBPE" getvocab $tmp/bpe$BPE_TOKENS.$train > $prep/vocab.$l
+    "$TOOLS_FASTBPE" learnbpe $BPE_TOKENS $tmp/$train > $BPE_CODE.$l
+    "$TOOLS_FASTBPE" applybpe $tmp/bpe$BPE_TOKENS.$train $tmp/$train $BPE_CODE.$l
+    "$TOOLS_FASTBPE" getvocab $tmp/bpe$BPE_TOKENS.$train > $prep/vocab.$l
 done
 log "Done."
 
@@ -190,7 +192,7 @@ for l in $src $tgt; do
     for split in train dev devtest test; do
         f=$split.$l
         log "Apply BPE to $f..."
-        "$FASTBPE" applybpe $prep/$f $tmp/$f $BPE_CODE.$l $prep/vocab.$l
+        "$TOOLS_FASTBPE" applybpe $prep/$f $tmp/$f $BPE_CODE.$l $prep/vocab.$l
         log "Done."
     done
 done
