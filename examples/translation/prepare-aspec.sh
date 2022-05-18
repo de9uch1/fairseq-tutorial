@@ -85,12 +85,12 @@ if not_exists "$PARALLEL_SCRIPT"; then
 fi
 if not_exists mosesdecoder; then
     log 'Installing Moses (for tokenization scripts)...'
-    git clone https://github.com/moses-smt/mosesdecoder.git
+    git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git
     log 'Done.'
 fi
 if not_exists "$KYTEA_TOKENIZER"; then
     log 'Installing KyTea (for tokenization scripts)...'
-    git clone https://github.com/neubig/kytea.git
+    git clone --depth 1 https://github.com/neubig/kytea.git
     pushd kytea
     autoreconf -i
     ./configure --prefix=$(pwd)
@@ -105,7 +105,7 @@ if not_exists "$KYTEA_TOKENIZER"; then
 fi
 if not_exists "$FASTBPE"; then
     log 'Installing fastBPE repository (for BPE pre-processing)...'
-    git clone https://github.com/glample/fastBPE.git
+    git clone --depth 1 https://github.com/glample/fastBPE.git
     pushd fastBPE
     g++ -std=c++11 -pthread -O3 fastBPE/main.cc -IfastBPE -o fastbpe
     popd
